@@ -1,81 +1,73 @@
-# Shark Tank Platform
+# 🦈 Shark Tank Website
 
-A full-stack web application that connects entrepreneurs with investors, built with React frontend and Spring Boot backend.
+Welcome to the **Shark Tank Website**, a dynamic platform inspired by the legendary show "Shark Tank", where entrepreneurs pitch their big ideas to real investors. 🚀
 
-## Features
+Whether you're a startup seeking funding 💸 or a shark looking for the next big opportunity 🧠 — this site brings the pitch room to your screen.
 
-- **User Authentication**: Login/Register system with role-based access
-- **Entrepreneur Dashboard**: Create and manage business pitches
-- **Investor Dashboard**: Browse pitches and make investment offers
-- **Admin Panel**: User management and system overview
-- **Responsive Design**: Modern UI that works on all devices
+---
 
-## Tech Stack
+## 🔥 Features
 
-### Frontend
-- React 19.1.0
-- React Router DOM 7.6.0
-- CSS3 with responsive design
+- 👤 **User Authentication**: Login/Register system with role-based access
+- 📜 **Create & Manage Pitches**: Entrepreneurs can create and manage business pitches
+- 💼 **View & Accept Investment Offers**: Investors can browse pitches and make offers
+- 📊 **Role-Based Dashboards**: Customized interfaces for Entrepreneurs, Investors, and Admins
+- 💬 **Real-time Interaction Simulation**: Platform for investor-startup connections
+- 🎨 **Responsive Design**: Modern UI that works on all devices
 
-### Backend
-- Spring Boot 3.4.4
-- Spring Data JPA
-- MySQL Database
-- Maven
+---
 
-## Prerequisites
+## 🛠️ Tech Stack
+
+| Frontend | Backend | Database | Build Tools |
+|----------|---------|----------|-------------|
+| React.js 19.1.0 | Java Spring Boot 3.4.4 | MySQL 8.0+ | Maven, npm |
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
 
 - Java 17 or higher
 - Node.js 16 or higher
 - MySQL 8.0 or higher
 - Maven 3.6 or higher
 
-## Setup Instructions
+### 1. Clone the repo
+```bash
+git clone https://github.com/codewithanirban/Shark-Tank-Website.git
+cd Shark-Tank-Website
+```
 
-### 1. Database Setup
-
-1. Create a MySQL database named `shark_tank`
-2. Update database credentials in `Backend/src/main/resources/application.properties`
-
-### 2. Backend Setup
-
-1. Navigate to the Backend directory:
-   ```bash
-   cd Backend
+### 2. Database Setup
+1. Start MySQL service
+2. Create database:
+   ```sql
+   CREATE DATABASE shark_tank;
    ```
+3. Update credentials in `Backend/src/main/resources/application.properties`
 
-2. Build the project:
-   ```bash
-   mvn clean install
-   ```
+### 3. Backend (Spring Boot)
+```bash
+cd Backend
+./mvnw spring-boot:run
+```
+- Backend will start on `http://localhost:8000`
+- Wait for "Started SharkTankApplication" message
 
-3. Run the Spring Boot application:
-   ```bash
-   mvn spring-boot:run
-   ```
+### 4. Frontend (React.js)
+```bash
+cd Frontend
+npm install
+npm start
+```
+- Frontend will open automatically in browser
+- Running on `http://localhost:3000`
 
-The backend will start on `http://localhost:8000`
+---
 
-### 3. Frontend Setup
-
-1. Navigate to the Frontend directory:
-   ```bash
-   cd Frontend
-   ```
-
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Start the development server:
-   ```bash
-   npm start
-   ```
-
-The frontend will start on `http://localhost:3000`
-
-## API Endpoints
+## 📋 API Endpoints
 
 ### Authentication
 - `POST /api/auth/login` - User login
@@ -102,13 +94,17 @@ The frontend will start on `http://localhost:3000`
 - `PUT /api/offers/{id}` - Update offer
 - `DELETE /api/offers/{id}` - Delete offer
 
-## User Roles
+---
 
-- **ADMIN**: System administration and user management
-- **ENTREPRENEUR**: Create and manage business pitches
-- **INVESTOR**: Browse pitches and make investment offers
+## 👥 User Roles
 
-## Project Structure
+- **🦈 ADMIN**: System administration and user management
+- **💡 ENTREPRENEUR**: Create and manage business pitches
+- **💰 INVESTOR**: Browse pitches and make investment offers
+
+---
+
+## 🏗️ Project Structure
 
 ```
 Shark Tank/
@@ -127,48 +123,77 @@ Shark Tank/
 │   │   ├── Pages/          # Page components
 │   │   └── services/       # API service functions
 │   └── public/
+├── start-backend.bat        # Windows backend startup script
+├── start-frontend.bat       # Windows frontend startup script
+├── STARTUP.md               # Detailed startup guide
 └── README.md
 ```
 
-## Development
+---
+
+## 🎯 Quick Start (Windows)
+
+1. **Start Backend**: Double-click `start-backend.bat`
+2. **Start Frontend**: Double-click `start-frontend.bat` (in a new terminal)
+3. **Access**: Open http://localhost:3000 in your browser
+
+---
+
+## 🧠 Inspiration
+
+Inspired by the creativity and hustle showcased in **Shark Tank**, this project is built to simulate a real-world investor-startup environment — all online!
+
+---
+
+## 🔧 Development
 
 ### Adding New Features
-
 1. **Backend**: Add new models, services, and controllers as needed
 2. **Frontend**: Create new components and pages in the appropriate directories
 3. **Database**: Update entities and run migrations if needed
 
 ### Code Style
-
 - Follow Java naming conventions for backend code
 - Use camelCase for JavaScript/React code
 - Maintain consistent indentation and formatting
 
-## Troubleshooting
+---
+
+## 🚨 Troubleshooting
 
 ### Common Issues
-
 1. **Database Connection**: Ensure MySQL is running and credentials are correct
 2. **Port Conflicts**: Check if ports 8000 (backend) and 3000 (frontend) are available
 3. **CORS Issues**: Backend CORS is configured for `http://localhost:3000`
 
 ### Logs
-
 - Backend logs are available in the console when running with Maven
 - Frontend errors appear in the browser console
 
-## Contributing
+---
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
+## 🤝 Contributing
 
-## License
+Contributions are welcome! Feel free to:
 
-This project is licensed under the MIT License.
+* Fork the repo
+* Create a new branch
+* Submit a pull request
 
-## Support
+---
 
-For questions or issues, please create an issue in the repository.
+## 📄 License
+
+This project is open source under the [MIT License](./LICENSE).
+
+---
+
+## 🙌 Acknowledgements
+
+* The original **Shark Tank** creators
+* Open-source community 💖
+* Java & React developers who inspired the tech stack
+
+---
+
+Made with 💻 and ☕ by [Anirban](https://github.com/codewithanirban)
