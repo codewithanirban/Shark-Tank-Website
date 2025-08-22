@@ -10,6 +10,7 @@ public interface IUsersService {
 	public String deleteUsers(Users user);
 	public String deleteUsers(int id);
 	public Users getUserById(int id);
+	public Users getUserByEmail(String emailid);
 	public List<Users> getAll();
 	public Users validateUsers(String emailid, String password);
 }

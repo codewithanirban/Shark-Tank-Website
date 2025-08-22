@@ -3,54 +3,83 @@ package com.code.st.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import com.code.st.models.Users;
 import com.code.st.services.IUsersService;
 
 @RestController
-@RequestMapping("api/users/")
+@RequestMapping("/api/users")
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class UsersController {
-	//adding the dependency
+
 	@Autowired
-	IUsersService userService;
-	
-	//root path
-	@GetMapping(value = "/")
-	public List<Users> getAllUsers(){
-		return userService.getAll();
-	}
-	
-	@GetMapping(value = "/{id}")
-	public Users getUsersById(@PathVariable("id") int id) {
-		return userService.getUserById(id);
-	}
-	
-//	@PostMapping(value="login")
-//	public Users userLogin(@RequestParam("emailid") String emailid,
-//			@RequestParam("password") String password) {
-//		return userService.validateUsers(emailid, password);
-//	}
-	@PostMapping(value="create")
-	public Users userCreate(@RequestBody Users users) {
-		return userService.createUsers(users);
-	}
-	
-	@PutMapping(value="edit")
-	public Users userEdit(@RequestBody Users users) {
-		return userService.updateUsers(users);
+	private IUsersService userService;
+
+	@GetMapping("/")
+	public ResponseEntity<List<Users>> getAllUsers() {
+		try {
+			List<Users> users = userService.getAll();
+			return ResponseEntity.ok(users);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
 	}
 
-	@DeleteMapping(value="delete/{id}")
-	public String userDelete(@PathVariable("id") int id) {
-		return userService.deleteUsers(id);
+	@GetMapping("/{id}")
+	public ResponseEntity<Users> getUserById(@PathVariable int id) {
+		try {
+			Users user = userService.getUserById(id);
+			if (user != null) {
+				return ResponseEntity.ok(user);
+			} else {
+				return ResponseEntity.notFound().build();
+			}
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
+	@PostMapping("/create")
+	public ResponseEntity<?> createUser(@RequestBody Users user) {
+		try {
+			// Check if user already exists
+			Users existingUser = userService.getUserByEmail(user.getEmailid());
+			if (existingUser != null) {
+				return ResponseEntity.badRequest()
+					.body("User with this email already exists");
+			}
+			
+			Users newUser = userService.createUsers(user);
+			return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+				.body("Failed to create user: " + e.getMessage());
+		}
+	}
+
+	@PutMapping("/{id}")
+	public ResponseEntity<?> updateUser(@PathVariable int id, @RequestBody Users user) {
+		try {
+			user.setUser_id(id);
+			Users updatedUser = userService.updateUsers(user);
+			return ResponseEntity.ok(updatedUser);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+				.body("Failed to update user: " + e.getMessage());
+		}
+	}
+
+	@DeleteMapping("/{id}")
+	public ResponseEntity<?> deleteUser(@PathVariable int id) {
+		try {
+			String result = userService.deleteUsers(id);
+			return ResponseEntity.ok(result);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+				.body("Failed to delete user: " + e.getMessage());
+		}
 	}
 }

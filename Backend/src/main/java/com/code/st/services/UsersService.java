@@ -58,6 +58,11 @@ public class UsersService implements IUsersService {
 	}
 
 	@Override
+	public Users getUserByEmail(String emailid) {
+		return usersrepositories.findByEmailid(emailid);
+	}
+
+	@Override
 	public List<Users> getAll() {
 		// TODO Auto-generated method stub
 		return usersrepositories.findAll();

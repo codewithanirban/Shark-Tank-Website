@@ -1,44 +1,34 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { login } from '../services/auth';
 
 export default function Login({ setUser }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-        const response = await fetch('http://localhost:8000/api/auth/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                emailid: email,
-                password: password
-            }),
-            credentials: 'include' // If using cookies/sessions
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || 'Login failed');
+        e.preventDefault();
+        setError('');
+        setIsLoading(true);
+        
+        try {
+            const user = await login(email, password);
+            setUser(user);
+            localStorage.setItem('user', JSON.stringify(user));
+            navigate(`/${user.role.toLowerCase()}`);
+        } catch (err) {
+            setError(err.message || 'Login failed. Please try again.');
+        } finally {
+            setIsLoading(false);
         }
-
-        const user = await response.json();
-        setUser(user);
-        localStorage.setItem('user', JSON.stringify(user));
-        navigate(`/${user.role.toLowerCase()}`);
-    } catch (err) {
-        setError(err.message || 'Login failed. Please try again.');
-    }
-};
+    };
 
     return (
         <div className="auth-form">
-            <h2>Login</h2>
+            <h2>Login to Shark Tank</h2>
             {error && <p className="error">{error}</p>}
             <form onSubmit={handleSubmit}>
                 <input
@@ -47,6 +37,7 @@ export default function Login({ setUser }) {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
+                    disabled={isLoading}
                 />
                 <input
                     type="password"
@@ -54,9 +45,15 @@ export default function Login({ setUser }) {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
+                    disabled={isLoading}
                 />
-                <button type="submit">Login</button>
+                <button type="submit" disabled={isLoading}>
+                    {isLoading ? 'Logging in...' : 'Login'}
+                </button>
             </form>
+            <p style={{ textAlign: 'center', marginTop: '1rem' }}>
+                Don't have an account? <a href="/register" style={{ color: '#003366' }}>Register here</a>
+            </p>
         </div>
     );
 }

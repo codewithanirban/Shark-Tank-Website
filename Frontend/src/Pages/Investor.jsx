@@ -1,101 +1,93 @@
 import { useState, useEffect } from 'react';
-import OfferCard from '../components/OfferCard';
-import { getPitches } from '../services/pitches';
-import { createOffer } from '../services/offers';
+import { Link } from 'react-router-dom';
 
 export default function Investor({ user }) {
   const [pitches, setPitches] = useState([]);
-  const [selectedPitch, setSelectedPitch] = useState(null);
-  const [offerData, setOfferData] = useState({
-    fundingAmt: 0,
-    equityReq: 0,
-    additionalTerms: ''
-  });
+  const [offers, setOffers] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchPitches = async () => {
-      const data = await getPitches();
-      setPitches(data.filter(p => p.status === 'OPEN'));
-    };
-    fetchPitches();
+    // TODO: Fetch available pitches and user's offers from backend
+    setLoading(false);
   }, []);
 
-  const handleOfferSubmit = async (e) => {
-    e.preventDefault();
-    if (!selectedPitch) return;
-    
-    const newOffer = await createOffer({
-      ...offerData,
-      investor: user.name,
-      status: 'PENDING',
-      pitch: { pitch_id: selectedPitch.pitch_id }
-    });
-    
-    alert(`Offer created successfully!`);
-    setOfferData({
-      fundingAmt: 0,
-      equityReq: 0,
-      additionalTerms: ''
-    });
-  };
-
   return (
-    <div className="page">
-      <h1>Available Pitches</h1>
-      
-      <div className="pitches-grid">
-        {pitches.map(pitch => (
-          <div 
-            key={pitch.pitch_id} 
-            className={`pitch-card ${selectedPitch?.pitch_id === pitch.pitch_id ? 'selected' : ''}`}
-            onClick={() => setSelectedPitch(pitch)}
-          >
-            <h3>{pitch.title}</h3>
-            <p>{pitch.description}</p>
-            <p>Funding: ${pitch.funding}</p>
-            <p>Equity: {pitch.equityOffered}%</p>
-          </div>
-        ))}
+    <div className="page-container">
+      <div className="page-header">
+        <h1>Investor Dashboard</h1>
+        <p>Welcome back, {user?.name}! Discover promising startups and manage your investment offers.</p>
       </div>
 
-      {selectedPitch && (
-        <div className="offer-form">
-          <h2>Make Offer for: {selectedPitch.title}</h2>
-          <form onSubmit={handleOfferSubmit}>
-            <div className="form-group">
-              <label>Funding Amount ($):</label>
-              <input
-                type="number"
-                value={offerData.fundingAmt}
-                onChange={(e) => setOfferData({...offerData, fundingAmt: parseFloat(e.target.value)})}
-                required
-                min="0"
-                step="1000"
-              />
-            </div>
-            <div className="form-group">
-              <label>Equity Requested (%):</label>
-              <input
-                type="number"
-                value={offerData.equityReq}
-                onChange={(e) => setOfferData({...offerData, equityReq: parseFloat(e.target.value)})}
-                required
-                min="0"
-                max="100"
-                step="1"
-              />
-            </div>
-            <div className="form-group">
-              <label>Additional Terms:</label>
-              <textarea
-                value={offerData.additionalTerms}
-                onChange={(e) => setOfferData({...offerData, additionalTerms: e.target.value})}
-              />
-            </div>
-            <button type="submit">Submit Offer</button>
-          </form>
+      <div className="dashboard-grid">
+        <div className="card">
+          <h3>Quick Actions</h3>
+          <div className="action-buttons">
+            <Link to="/browse-pitches" className="btn btn-primary">Browse Pitches</Link>
+            <Link to="/my-offers" className="btn btn-secondary">View My Offers</Link>
+          </div>
         </div>
-      )}
+
+        <div className="card">
+          <h3>Investment Summary</h3>
+          <div className="stats-grid">
+            <div className="stat-item">
+              <span className="stat-number">{offers.length}</span>
+              <span className="stat-label">Total Offers Made</span>
+            </div>
+            <div className="stat-item">
+              <span className="stat-number">0</span>
+              <span className="stat-label">Active Investments</span>
+            </div>
+            <div className="stat-item">
+              <span className="stat-number">$0</span>
+              <span className="stat-label">Total Invested</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="card">
+        <h3>Featured Pitches</h3>
+        {loading ? (
+          <p>Loading...</p>
+        ) : pitches.length > 0 ? (
+          <div className="pitches-grid">
+            {pitches.slice(0, 3).map((pitch, index) => (
+              <div key={index} className="pitch-preview">
+                <h4>{pitch.title}</h4>
+                <p>{pitch.description?.substring(0, 100)}...</p>
+                <div className="pitch-meta">
+                  <span>Funding: ${pitch.funding?.toLocaleString()}</span>
+                  <span>Equity: {pitch.equityOffered}%</span>
+                </div>
+                <Link to={`/pitch/${pitch.pitch_id}`} className="btn btn-primary">
+                  View Details
+                </Link>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p>No pitches available at the moment. Check back later!</p>
+        )}
+      </div>
+
+      <div className="card">
+        <h3>Recent Activity</h3>
+        {loading ? (
+          <p>Loading...</p>
+        ) : offers.length > 0 ? (
+          <div className="activity-list">
+            {offers.slice(0, 5).map((offer, index) => (
+              <div key={index} className="activity-item">
+                <span className="activity-text">Made offer on "{offer.pitch?.title}"</span>
+                <span className="activity-time">{new Date().toLocaleDateString()}</span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p>No recent activity. Start browsing pitches to make your first offer!</p>
+        )}
+      </div>
     </div>
   );
 }

@@ -3,45 +3,42 @@ package com.code.st.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.code.st.models.Pitches;
-import com.code.st.services.PitchesService;
+import com.code.st.services.IPitchesService;
 
 @RestController
-@RequestMapping("api/pitch/")
+@RequestMapping("/api/pitches")
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class PitchesController {
+
 	@Autowired
-	PitchesService pitchService;
-	
-	@GetMapping(value = "/")
+	private IPitchesService pitchService;
+
+	@GetMapping("/")
 	public List<Pitches> getAllPitches() {
 		return pitchService.getAll();
 	}
-	
-	@GetMapping(value="/{id}")
-	public Pitches getPitchById(@PathVariable("id") int id) {
+
+	@GetMapping("/{id}")
+	public Pitches getPitchById(@PathVariable int id) {
 		return pitchService.getById(id);
 	}
-	@PostMapping(value="create")
+
+	@PostMapping("/create")
 	public Pitches createPitch(@RequestBody Pitches pitch) {
 		return pitchService.add(pitch);
 	}
-	@PutMapping(value="edit")
-	public Pitches editPitch(@RequestBody Pitches pitch) {
+
+	@PutMapping("/{id}")
+	public Pitches updatePitch(@PathVariable int id, @RequestBody Pitches pitch) {
+		pitch.setPitch_id(id);
 		return pitchService.update(pitch);
 	}
-	
-	@DeleteMapping(value="delete/{id}")
-	public String deletePitch(@PathVariable("id") int id) {
+
+	@DeleteMapping("/{id}")
+	public String deletePitch(@PathVariable int id) {
 		return pitchService.delete(id);
 	}
-	
 }

@@ -10,6 +10,7 @@ export default function Register({ setUser }) {
     role: 'ENTREPRENEUR' // Default role
   });
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -19,13 +20,18 @@ export default function Register({ setUser }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+    setIsLoading(true);
+    
     try {
       const user = await register(formData);
       setUser(user);
       localStorage.setItem('user', JSON.stringify(user));
       navigate(`/${user.role.toLowerCase()}`);
     } catch (err) {
-      setError('Registration failed. Please try again.');
+      setError(err.message || 'Registration failed. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -41,6 +47,7 @@ export default function Register({ setUser }) {
           value={formData.name}
           onChange={handleChange}
           required
+          disabled={isLoading}
         />
         <input
           type="email"
@@ -49,6 +56,7 @@ export default function Register({ setUser }) {
           value={formData.emailid}
           onChange={handleChange}
           required
+          disabled={isLoading}
         />
         <input
           type="password"
@@ -57,6 +65,7 @@ export default function Register({ setUser }) {
           value={formData.password}
           onChange={handleChange}
           required
+          disabled={isLoading}
         />
         <div className="form-group">
           <label>Account Type:</label>
@@ -65,14 +74,19 @@ export default function Register({ setUser }) {
             value={formData.role} 
             onChange={handleChange}
             required
+            disabled={isLoading}
           >
             <option value="ENTREPRENEUR">Entrepreneur</option>
             <option value="INVESTOR">Investor</option>
           </select>
         </div>
-        <button type="submit">Register</button>
+        <button type="submit" disabled={isLoading}>
+          {isLoading ? 'Creating Account...' : 'Register'}
+        </button>
       </form>
-      <p>Already have an account? <a href="/login">Login</a></p>
+      <p style={{ textAlign: 'center', marginTop: '1rem' }}>
+        Already have an account? <a href="/login" style={{ color: '#003366' }}>Login here</a>
+      </p>
     </div>
   );
 }
